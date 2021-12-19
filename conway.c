@@ -73,27 +73,26 @@ int main(void)
     printf("\n This will be the initial grid: ");
     printGrid(grid, rows, columns);
 
-    printf("Press 'a' to start the simulation or any other game to quit.\n ");
-    char c;
-    scanf(" %c", &c);
-    
+    printf("Press ENTER to start the simulation\n ");
+    getchar();
+    getchar();
+
     int *neighborGrid = calloc(rows*columns, sizeof(int));
     if (neighborGrid == NULL)   return 1;
     
-    if (c == 'a')
+    while(!(gridIsDead(grid, rows, columns)))
     {
-        while(!(gridIsDead(grid, rows, columns)))
-        {
-        simulate(grid, neighborGrid, rows, columns);
-        system("cls");
-        printGrid(grid, rows, columns);
-        printf("Press Ctrl + C at any time to quit the simulation.\n");
-        sleep(1);
-        }
-    
-        printf("All the cells are dead! Game Over.\n");
-
+    simulate(grid, neighborGrid, rows, columns);
+    system("cls");
+    printGrid(grid, rows, columns);
+    printf("Press Ctrl + C at any time to quit the simulation.\n");
+    sleep(1);
     }
+
+    printf("All the cells are dead! Game Over.\n");
+
+    free(grid);
+    free(neighborGrid);
 
     
     return 0;
