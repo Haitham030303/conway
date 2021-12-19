@@ -6,9 +6,11 @@
 #include <unistd.h>
 #include <conio.h>  
 
-
+void welcomeUser();
 void yellow();   
 void reset();
+void printAts(int n);
+void printHyphens(int n);
 void storeNeighbors(char *grid, int *neighborGrid, int rows, int columns);
 bool gridIsDead(char *grid, int rows, int columns);
 void makeAlive(char *grid, int i, int j, int columns);
@@ -24,22 +26,8 @@ int countNeighbors(char *grid, int loci, int locj, int rows, int columns);
 
 int main(void)
 {
-    system("cls"); // or
-    // system("clear");
+    welcomeUser();
 
-    yellow();   printf("\n\n     @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"); reset();
-    printf("-----------------------------------------------------------");
-    yellow();   printf("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");   reset();
-    printf("\n     -------------------------------Welcome to Conway's Game of Life (a.k.a. The 0 Player Game)------------------------------\n");
-    yellow();   printf("     @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"); reset();
-    printf("-----------------------------------------------------------");
-    yellow();   printf("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n\n\n\n\n");   reset();
-    printf("(Open on full screen for best experience.)\n\n\n\n");
-
-    printf("Here are the rules for this game in short;\nFor each generation of cells in a grid:\n \n");
-    printf("\t1. Any live cell with two or three live neighbours survives.\n");
-    printf("\t2. Any dead cell with three live neighbours becomes a live cell.\n");
-    printf("\t3. All other live cells die in the next generation. Similarly, all other dead cells stay dead.\n\n\n");
     int rows, columns;  
 
     printf("\nPress ENTER to continue.\n");
@@ -53,17 +41,20 @@ int main(void)
 
     printf("\n\n");
 
-    // for the border around the grid
+    // for the borders around the grid
     rows += 2;
     columns += 2;
 
+    // allocate the main grid and a grid to store the number of neighbors of each cell
     char *grid = calloc(rows*columns, sizeof(char));
     if (grid == NULL) return 1;
-
-    char option = printMenu();
+    int *neighborGrid = calloc(rows*columns, sizeof(int));
+    if (neighborGrid == NULL)   return 1;
 
     // initialize all cells to be dead
     initializeGrid(grid, rows, columns);
+
+    char option = printMenu();
 
     if (option == '1')
     {
@@ -71,7 +62,7 @@ int main(void)
     }
     else if (option == '2')
     {   
-        // input the desiyellow coordinates
+        // input the desired coordinates
         system("cls");
         printGrid(grid, rows, columns);
         adjustGrid(grid, rows, columns);
@@ -85,8 +76,7 @@ int main(void)
     getchar();
     getchar();
 
-    int *neighborGrid = calloc(rows*columns, sizeof(int));
-    if (neighborGrid == NULL)   return 1;
+    
     
     while(!(gridIsDead(grid, rows, columns)))
     {
@@ -105,8 +95,9 @@ int main(void)
     
     return 0;
 
-
 }
+
+
 
 void yellow()
 {
@@ -116,6 +107,40 @@ void yellow()
 void reset()
 {
     printf("\e[0m");
+}
+
+void printAts(int n)
+{
+    for (int i = 0; i < n; i++)
+    {
+        printf("@");
+    }
+}
+
+void printHyphens(int n)
+{
+    for (int i = 0; i < n; i++)
+    {
+        printf("-");
+    }
+}
+
+void welcomeUser()
+{
+    system("cls"); // or
+    // system("clear");
+
+    printf("\n\n                    ");
+    yellow(); printAts(30); reset(); printHyphens(59); yellow(); printAts(30); reset(); printf("\n                    ");
+    printHyphens(30); printf("Welcome to Conway's Game of Life (a.k.a. The 0 Player Game)"); printHyphens(30); printf("\n                    ");
+    yellow(); printAts(30); reset(); printHyphens(59); yellow(); printAts(30); reset(); printf("\n\n\n\n\n");
+    
+    printf("(Open on full screen for best experience.)\n\n\n\n");
+
+    printf("Here are the rules for this game in short;\nFor each generation of cells in a grid:\n \n");
+    printf("\t1. Any live cell with two or three live neighbours survives.\n");
+    printf("\t2. Any dead cell with three live neighbours becomes a live cell.\n");
+    printf("\t3. All other live cells die in the next generation. Similarly, all other dead cells stay dead.\n\n\n");
 }
 
 bool gridIsDead(char *grid, int rows, int columns)
@@ -131,6 +156,7 @@ bool gridIsDead(char *grid, int rows, int columns)
 
     return true;
 }
+
 void makeAlive(char *grid, int i, int j, int columns)
 {
     *(grid + i * columns + j) = '@';
@@ -183,10 +209,12 @@ int countNeighbors(char *grid, int loci, int locj, int rows, int columns)
     int count = 0;
     int location = loci * columns + locj;
 
+    // check all 8 of the neighbors of the cell in (locj, loci) 
     for (int i = -1; i < 2; i++)
     {
         for (int j = -1; j < 2; j++)
         {
+            // don't count itself
             if (i == 0 && j == 0)
                 continue;
             if (*(grid + location + i * columns + j) == '@')
@@ -197,6 +225,7 @@ int countNeighbors(char *grid, int loci, int locj, int rows, int columns)
     return count;
 }
 
+// store the no of neighbors of each cell in its respective location in another 2D array 
 void storeNeighbors(char *grid, int *neighborGrid, int rows, int columns)
 {
     for (int i = 1; i < rows - 1; i++)
@@ -208,11 +237,13 @@ void storeNeighbors(char *grid, int *neighborGrid, int rows, int columns)
     }
 }
 
-/*
+/* Rules: 
     1. Any live cell with two or three live neighbours survives.
     2. Any dead cell with three live neighbours becomes a live cell.
     3. All other live cells die in the next generation. Similarly, all other dead cells stay dead.
 */
+
+// run the simulation for 1 generation for each cell in the grid
 void simulate(char *grid, int * neighborGrid, int rows, int columns)
 {
     storeNeighbors(grid, neighborGrid, rows, columns);
@@ -317,6 +348,8 @@ void adjustGrid(char *grid, int rows, int columns)
 
         makeAlive(grid, ic, jc, columns);
         system("cls");
+        
+        // print the grid again this time updating/adding/making alive the cell above
         printGrid(grid, rows, columns);        
     }
 }
@@ -335,10 +368,9 @@ char printMenu()
 
 void initializeGrid(char *grid, int rows, int columns)
 {
-    // also initialize the borders to be dead
-    for (int i = 1; i < rows - 1; i++)
+    for (int i = 0; i < rows; i++)
     {
-        for (int j = 1; j < columns - 1; j++)
+        for (int j = 0; j < columns; j++)
         {
             makeDead(grid, i, j, columns);
         }
