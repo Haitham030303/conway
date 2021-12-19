@@ -13,6 +13,7 @@ void storeNeighbors(char *grid, int *neighborGrid, int rows, int columns);
 bool gridIsDead(char *grid, int rows, int columns);
 void makeAlive(char *grid, int i, int j, int columns);
 void makeDead(char *grid, int i, int j, int columns);
+void mirrorEdges(char *grid, int rows, int columns);
 void adjustGrid(char *grid, int rows, int columns);
 void randomizeGrid(char *grid, int columns, int rows);
 char printMenu();
@@ -40,6 +41,9 @@ int main(void)
     printf("\t2. Any dead cell with three live neighbours becomes a live cell.\n");
     printf("\t3. All other live cells die in the next generation. Similarly, all other dead cells stay dead.\n\n\n");
     int rows, columns;  
+
+    printf("\nPress ENTER to continue.\n");
+    getchar();
 
     printf("Enter the number of rows and columns you want for the grid. (Preferrably 5 - 20 for rows and 5 - 40 columns)\n\n");
     printf("Rows: ");
