@@ -35,6 +35,10 @@ int main(void)
     yellow();   printf("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n\n\n\n\n");   reset();
     printf("(Open on full screen for best experience.)\n\n\n\n");
 
+    printf("Here are the rules for this game in short;\nFor each generation of cells in a grid:\n \n");
+    printf("\t1. Any live cell with two or three live neighbours survives.\n");
+    printf("\t2. Any dead cell with three live neighbours becomes a live cell.\n");
+    printf("\t3. All other live cells die in the next generation. Similarly, all other dead cells stay dead.\n\n\n");
     int rows, columns;  
 
     printf("Enter the number of rows and columns you want for the grid. (Preferrably 5 - 20 for rows and 5 - 40 columns)\n\n");
@@ -133,11 +137,46 @@ void makeDead(char *grid, int i, int j, int columns)
     *(grid + i * columns + j) = '.';
 }
 
+// mirror the edges to create the effect of wrapping around when reaching out of bound
+void mirrorEdges(char *grid, int rows, int columns)
+{
+    /*
+        Eg: 
+    1st    . . . . . .
+    2nd    . 1 2 3 4 .
+    3rd    . 5 6 7 8 .
+    4th    . a b c d .
+    5th    . . . . . .
+
+    make the 5th row be the same as the 2nd row ....so that when we look down from the bottom (4th) row, 
+    we'll be looking back up to the upper (2nd) row. 
+    and etc......
+
+    */
+
+    for (int j = 1; j < columns - 1; j++)
+    {
+        // fix the upper edges
+        *(grid + 0 * columns + j) = *(grid + (rows - 2) * columns + j);
+        // fix the lower edges
+        *(grid + (rows - 1) * columns + j) = *(grid + 1 * columns + j);
+    }
+
+    for (int i = 1; i < rows - 1; i++)
+    {
+        // fix the left edges
+        *(grid + i * columns + 0) = *(grid + i * columns + (columns - 2));
+
+        // fix the right edges
+        *(grid + i * columns + (columns - 1)) = *(grid + i * columns + 1);
+    }
+}
 
 int countNeighbors(char *grid, int loci, int locj, int rows, int columns)
 {
-    int count = 0;
+    mirrorEdges(grid, rows, columns);
 
+    int count = 0;
     int location = loci * columns + locj;
 
     for (int i = -1; i < 2; i++)
@@ -180,6 +219,7 @@ void simulate(char *grid, int * neighborGrid, int rows, int columns)
         {
             char cell = *(grid + i * columns + j);
             int neighbours = *(neighborGrid + i * columns + j);
+
             //apply the rules 
             if (cell == '@')
             {
@@ -300,4 +340,3 @@ void initializeGrid(char *grid, int rows, int columns)
         }
     }
 }
-
