@@ -4,7 +4,12 @@
 #include <time.h>
 #include <stdbool.h>
 #include <unistd.h>
+#ifdef _WIN32
 #include <conio.h>  
+#define CLEAR() system("cls")
+#elif __linux__
+#define CLEAR() system("clear")
+#endif
 
 void welcomeUser();
 void yellow();   
@@ -63,12 +68,12 @@ int main(void)
     else if (option == '2')
     {   
         // input the desired coordinates
-        system("cls");
+        CLEAR();
         printGrid(grid, rows, columns);
         adjustGrid(grid, rows, columns);
     }
     
-    system("cls");
+    CLEAR();
     printf("\n This will be the initial grid: ");
     printGrid(grid, rows, columns);
 
@@ -81,7 +86,7 @@ int main(void)
     while(!(gridIsDead(grid, rows, columns)))
     {
     simulate(grid, neighborGrid, rows, columns);
-    system("cls");
+    CLEAR();
     printGrid(grid, rows, columns);
     printf("Press Ctrl + C at any time to quit the simulation.\n");
     sleep(1);
@@ -127,8 +132,7 @@ void printHyphens(int n)
 
 void welcomeUser()
 {
-    system("cls"); // or
-    // system("clear");
+    CLEAR();
 
     printf("\n\n                    ");
     yellow(); printAts(30); reset(); printHyphens(59); yellow(); printAts(30); reset(); printf("\n                    ");
@@ -347,7 +351,7 @@ void adjustGrid(char *grid, int rows, int columns)
         printf("\n\n");
 
         makeAlive(grid, ic, jc, columns);
-        system("cls");
+        CLEAR();
         
         // print the grid again this time updating/adding/making alive the cell above
         printGrid(grid, rows, columns);        
