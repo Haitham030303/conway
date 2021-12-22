@@ -4,8 +4,8 @@
 #include <time.h>
 #include <stdbool.h>
 #include <unistd.h>
-#ifdef _WIN32
-#include <conio.h>  
+#include <conio.h>
+#ifdef _WIN32  
 #define CLEAR() system("cls")
 #elif __linux__
 #define CLEAR() system("clear")
