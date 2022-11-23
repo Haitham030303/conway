@@ -3,8 +3,9 @@
 #include <string.h>
 #include <time.h>
 #include <stdbool.h>
-#include <unistd.h>
 #include <conio.h>
+#include <windows.h>
+#include <unistd.h>
 #ifdef _WIN32  
 #define CLEAR() system("cls")
 #elif __linux__
@@ -89,7 +90,7 @@ int main(void)
     CLEAR();
     printGrid(grid, rows, columns);
     printf("Press Ctrl + C at any time to quit the simulation.\n");
-    sleep(1);
+    sleep(0.800);
     }
 
     printf("All the cells are dead! Game Over.\n");
